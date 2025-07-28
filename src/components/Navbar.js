@@ -1,5 +1,6 @@
 import React from 'react'
 
+
 function Navbar() {
   return (
         <nav className="navbar navbar-expand-lg bg-body-tertiary">
@@ -14,13 +15,25 @@ function Navbar() {
                 <a className="nav-link active" aria-current="page" href="#">Home</a>
                 </li>
                 <li className="nav-item">
-                <a className="nav-link" href="#">Features</a>
+                <a className="nav-link" href="#">Business</a>
                 </li>
                 <li className="nav-item">
-                <a className="nav-link" href="#">Pricing</a>
+                <a className="nav-link" href="#">Sports</a>
                 </li>
                 <li className="nav-item">
-                <a className="nav-link disabled" aria-disabled="true">Disabled</a>
+                <a className="nav-link disabled" >Technology</a>
+                </li>
+                <li className="nav-item">
+                <a className="nav-link disabled" >Health</a>
+                </li>
+                <li className="nav-item">
+                <a className="nav-link disabled" >Entertainment</a>
+                </li>
+                <li className="nav-item">
+                <a className="nav-link disabled" >Science</a>
+                </li>
+                <li className="nav-item">
+                <a className="nav-link disabled" >General</a>
                 </li>
             </ul>
             </div>
