@@ -4,24 +4,24 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 
 # Directory structure:
-  ├── README.md
-  ├── package.json
-  ├── public
-  │   ├── index.html
-  │   ├── manifest.json
-  │   └── robots.txt
-  └── src
-      ├── App.css
-      ├── App.js
-      ├── App.test.js
-      ├── components
-      │   ├── Navbar.js
-      │   ├── News.js
-      │   └── NewsItems.js
-      ├── index.css
-      ├── index.js
-      ├── reportWebVitals.js
-      └── setupTests.js
+    ├── README.md
+    ├── package.json
+    ├── public
+    │   ├── index.html
+    │   ├── manifest.json
+    │   └── robots.txt
+    └── src
+        ├── App.css
+        ├── App.js
+        ├── App.test.js
+        ├── components
+        │   ├── Navbar.js
+        │   ├── News.js
+        │   └── NewsItems.js
+        ├── index.css
+        ├── index.js
+        ├── reportWebVitals.js
+        └── setupTests.js
 
 ## Available Scripts
 
