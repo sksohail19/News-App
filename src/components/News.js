@@ -1,30 +1,32 @@
 import React, { Component } from 'react';
 import NewsItems from './NewsItems';
-import Skeleton from 'react-loading-skeleton'
-import 'react-loading-skeleton/dist/skeleton.css'
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 import PropTypes from 'prop-types';
 
 export class News extends Component {
-  static default = {
-    country: "in",
+  static defaultProps = {
+    country: 'in',
     pageSize: 10,
-    category: "general",
-  }
-  
+    page: 1
+  };
+
   static propTypes = {
     country: PropTypes.string,
     pageSize: PropTypes.number,
     category: PropTypes.string,
-  }
+    type: PropTypes.string,
+    apiKey: PropTypes.string.isRequired
+  };
 
-  constructor() {
-    super();
-    console.log("Hello, I am a constructor from the News component");
+  constructor(props) {
+    super(props);
+    console.log('Hello, I am a constructor from the News component');
     this.state = {
       articles: [],
       loading: true,
-      page: 1, // Added `page` state
-      
+      page: 1,
+      totalResults: 0
     };
   }
 
@@ -34,51 +36,86 @@ export class News extends Component {
 
   fetchNews = async () => {
     const { page } = this.state;
-    let url = `https://newsapi.org/v2/top-headlines?country=us&apiKey=a626e591e85a4c618f76e0ae74939e9f&page=${page}&pageSize=10`;
+    const { type, apiKey, pageSize, country, category } = this.props;
+
+    let url = '';
+    if (type === 'everything') {
+      // You can replace 'india' with a dynamic query prop if needed
+      url = `https://newsapi.org/v2/everything?q=india&apiKey=${apiKey}&page=${page}&pageSize=${pageSize}`;
+    } else if (type === 'top-headlines' && category) {
+      url = `https://newsapi.org/v2/top-headlines?country=${country}&category=${category}&apiKey=${apiKey}&page=${page}&pageSize=${pageSize}`;
+    } else {
+            url = `https://newsapi.org/v2/top-headlines?country=${country}&apiKey=${apiKey}&page=${page}&pageSize=${pageSize}`;
+    }
+
     this.setState({ loading: true });
-    let data = await fetch(url);
-    let parsedData = await data.json();
-    this.setState({ articles: parsedData.articles, loading: false });
+
+    try {
+      const response = await fetch(url);
+      const parsedData = await response.json();
+      console.log(parsedData);
+      this.setState({
+        articles: Array.isArray(parsedData.articles) ? parsedData.articles : [],
+        totalResults: parsedData.totalResults || 0,
+        loading: false
+      });
+    } catch (error) {
+      console.error("Failed to fetch news:", error);
+      this.setState({ articles: [], loading: false });
+    }
   };
 
-  handlePreviousButton = async () => {
+  handlePreviousButton = () => {
     this.setState(
       (prevState) => ({ page: prevState.page - 1 }),
-      this.fetchNews // Callback to fetch news after updating state
+      this.fetchNews
     );
   };
 
-  handleNextButton = async () => {
-    
+  handleNextButton = () => {
     this.setState(
       (prevState) => ({ page: prevState.page + 1 }),
-      this.fetchNews,
-       // Callback to fetch news after updating state
+      this.fetchNews
     );
   };
 
-  
   render() {
+    const { articles, loading, page, totalResults } = this.state;
+
     return (
       <div className="container my-4">
-        {this.state.loading && <Skeleton count={3} height={"30vh"} boarderRadius={"10px"} enableAnimation={true}/>}
+        {loading && (
+          <Skeleton
+            count={3}
+            height="30vh"
+            borderRadius="10px"
+            enableAnimation={true}
+          />
+        )}
+
         <div className="row">
-          {!this.state.loading && this.state.articles.map((element) => {
-            return (
+          {!loading &&
+            Array.isArray(articles) &&
+            articles.map((element) => (
               <div className="col-md-4" key={element.url}>
                 <NewsItems
-                  title={element.title ? element.title.slice(0, 30) : ""}
-                  description={element.description ? element.description.slice(0, 55) : ""}
-                  urlToImage={element.urlToImage || "https://static.vecteezy.com/system/resources/previews/001/234/420/non_2x/breaking-news-on-mesh-background-vector.jpg"}
+                  title={element.title ? element.title.slice(0, 45) : ''}
+                  description={element.description
+                    ? element.description.slice(0, 55)
+                    : ''}
+                  urlToImage={
+                    element.urlToImage ||
+                    'https://static.vecteezy.com/system/resources/previews/001/234/420/non_2x/breaking-news-on-mesh-background-vector.jpg'
+                  }
                   url={element.url}
                 />
               </div>
-            );
-          })}
+            ))}
         </div>
+
         <div className="container d-flex justify-content-between">
           <button
-            disabled={this.state.page <= 1}
+            disabled={page <= 1}
             type="button"
             className="btn btn-dark"
             onClick={this.handlePreviousButton}
@@ -89,7 +126,7 @@ export class News extends Component {
             type="button"
             className="btn btn-dark"
             onClick={this.handleNextButton}
-            disabled={this.state.page + 1 > Math.ceil(this.state.totalResults / 10)}
+            disabled={page + 1 > Math.ceil(totalResults / this.props.pageSize)}
           >
             Next &rarr;
           </button>
