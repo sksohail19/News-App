@@ -8,7 +8,9 @@ export class News extends Component {
   static defaultProps = {
     country: 'in',
     pageSize: 10,
-    page: 1
+    page: 1,
+    type: '',
+    category: '',
   };
 
   static propTypes = {
@@ -49,7 +51,7 @@ export class News extends Component {
     }
 
     this.setState({ loading: true });
-
+    
     try {
       const response = await fetch(url);
       const parsedData = await response.json();
@@ -108,6 +110,9 @@ export class News extends Component {
                     'https://static.vecteezy.com/system/resources/previews/001/234/420/non_2x/breaking-news-on-mesh-background-vector.jpg'
                   }
                   url={element.url}
+                  author={element.author? element.author : 'Unknown'}
+                  date={element.publishedAt}
+                  source={element.source.name}
                 />
               </div>
             ))}
